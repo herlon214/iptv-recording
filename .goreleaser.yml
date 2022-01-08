@@ -1,0 +1,24 @@
+project_name: iptv-rec
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - binary: iptv-rec
+    env:
+      - CGO_ENABLED=0
+    goarch:
+      - 386
+      - amd64
+      - arm
+      - arm64
+    goos:
+      - linux
+      - windows
+      - darwin
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+changelog:
+  skip: true
+
