@@ -38,3 +38,22 @@ items:
     schedule: "0 04 * * *" # Cron style
     duration: 41m20s
 ```
+
+Example of systemctl daemon service:
+
+```
+[Unit]
+Description=Record IPTV streams
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi # Folder which contains the recording.yaml file
+Type=simple
+TimeoutStopSec=10
+Restart=on-failure
+RestartSec=5
+ExecStart=/usr/bin/iptv-rec
+
+[Install]
+WantedBy=multi-user.target
+```
