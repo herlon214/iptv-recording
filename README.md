@@ -1,6 +1,8 @@
 # IPTV Recording
 Manages ffmpeg process to recording IPTV streams.
 
+You need `ffmpeg` installed: https://www.ffmpeg.org/download.html
+
 ```shell
 $ iptv-rec recording.yaml
 
