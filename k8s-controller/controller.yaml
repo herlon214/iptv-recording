@@ -6,8 +6,8 @@ spec:
   group: herlon214.github.io
   scope: Namespaced
   names:
-    plural: iptv-recordings
-    singular: iptv-recording
+    plural: iptvrecordings
+    singular: iptvrecording
     kind: IptvRecording
   versions:
     - name: v1
