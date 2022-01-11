@@ -4,7 +4,7 @@ Manages ffmpeg process to recording IPTV streams.
 You need `ffmpeg` installed: https://www.ffmpeg.org/download.html
 
 ```shell
-$ iptv-rec recording.yaml
+$ iptv-rec local
 
 2022/01/08 04:41:02 Found 1 items to record
 2022/01/08 04:41:02 ---------------------
@@ -35,7 +35,7 @@ Example of `recording.yaml`:
 items:
   - name: Live Name
     url: http://iptv-stream-url/live/user/pwd/7986.ts
-    fileName: recording-$date # $date will be transformed to ""
+    fileName: recording-$date # $date will be transformed to "2022-01-11.1720" (for example)
     folder: /mnt/data
     schedule: "0 04 * * *" # Cron style
     duration: 41m20s
@@ -54,7 +54,7 @@ Type=simple
 TimeoutStopSec=10
 Restart=on-failure
 RestartSec=5
-ExecStart=/usr/bin/iptv-rec
+ExecStart=/usr/bin/iptv-rec local
 
 [Install]
 WantedBy=multi-user.target
