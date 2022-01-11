@@ -54,7 +54,7 @@ spec:
       containers:
         - name: controller
           image: ghcr.io/herlon214/iptv-recording:v0.3.0
-          command: ["k8s"]
+          args: ["k8s"]
 ---
 apiVersion: v1
 kind: Service
