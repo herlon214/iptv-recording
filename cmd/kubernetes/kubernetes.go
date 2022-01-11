@@ -1,6 +1,7 @@
 package kubernetes
 
 import (
+	"github.com/herlon214/iptv-recording/recording"
 	"github.com/spf13/cobra"
 	"io/ioutil"
 	"log"
@@ -29,12 +30,8 @@ func run(cmd *cobra.Command, args []string) {
 type Controller struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata"`
-	Spec              ControllerSpec   `json:"spec"`
+	Spec              recording.Item   `json:"spec"`
 	Status            ControllerStatus `json:"status"`
-}
-
-type ControllerSpec struct {
-	Message string `json:"message"`
 }
 
 type ControllerStatus struct {
@@ -82,7 +79,7 @@ func sync(request *SyncRequest) (*SyncResponse, error) {
 				{
 					Name:    "hello",
 					Image:   "busybox",
-					Command: []string{"echo", request.Parent.Spec.Message},
+					Command: []string{"echo", request.Parent.Spec.Name},
 				},
 			},
 		},

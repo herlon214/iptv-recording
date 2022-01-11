@@ -15,7 +15,24 @@ spec:
       storage: true
       schema:
         openAPIV3Schema:
-          x-kubernetes-preserve-unknown-fields: true
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                name:
+                  type: string
+                url:
+                  type: string
+                fileName:
+                  type: string
+                schedule:
+                  type: string
+                duration:
+                  type: string
+                folder:
+                  type: string
+
       subresources:
         status: {}
 ---

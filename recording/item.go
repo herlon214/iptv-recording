@@ -9,25 +9,32 @@ import (
 )
 
 type Item struct {
-	Name     string        `yaml:"name"`
-	URL      string        `yaml:"url"`
-	FileName string        `yaml:"fileName"`
-	Schedule string        `yaml:"schedule"` // Cron
-	Duration time.Duration `yaml:"duration"`
-	Folder   string        `yaml:"folder"`
+	Name     string `yaml:"name" json:"name"`
+	URL      string `yaml:"url" json:"url"`
+	FileName string `yaml:"fileName" json:"fileName"`
+	Schedule string `yaml:"schedule" json:"schedule"` // Cron
+	Duration string `yaml:"duration" json:"duration"`
+	Folder   string `yaml:"folder" json:"folder"`
 
 	process *process.Recording
 }
 
 func (i *Item) ShouldRun() (bool, error) {
+	// Parse cron
 	schedule, err := cron.ParseStandard(i.Schedule)
 	if err != nil {
 		return false, err
 	}
 
-	next := schedule.Next(time.Now().Add(i.Duration * -1))
+	// Parse duration
+	dur, err := time.ParseDuration(i.Duration)
+	if err != nil {
+		return false, err
+	}
 
-	if time.Now().After(next) && time.Now().Before(next.Add(i.Duration)) {
+	next := schedule.Next(time.Now().Add(dur * -1))
+
+	if time.Now().After(next) && time.Now().Before(next.Add(dur)) {
 		return true, nil
 	}
 
