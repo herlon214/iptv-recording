@@ -1,2 +1,3 @@
 *.yaml
 dist/
+.env
