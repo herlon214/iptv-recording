@@ -70,7 +70,7 @@ spec:
     spec:
       containers:
         - name: controller
-          image: ghcr.io/herlon214/iptv-recording:v0.3.0
+          image: ghcr.io/herlon214/iptv-recording:v0.3.3
           args: ["k8s"]
 ---
 apiVersion: v1
