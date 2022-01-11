@@ -71,7 +71,7 @@ func sync(request *SyncRequest) (*SyncResponse, error) {
 	for _, pod := range request.Children.Pods {
 		if strings.Contains(name, pod.Name) {
 			response.Status.Replicas++
-			if pod.Status.Phase == v1.PodSucceeded {
+			if pod.Status.Phase == v1.PodRunning {
 				response.Status.Succeeded++
 			}
 		}
