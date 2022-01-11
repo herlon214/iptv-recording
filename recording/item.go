@@ -15,6 +15,7 @@ type Item struct {
 	Schedule string `yaml:"schedule" json:"schedule"` // Cron
 	Duration string `yaml:"duration" json:"duration"`
 	Folder   string `yaml:"folder" json:"folder"`
+	HostPath string `json:"hostPath"`
 
 	process *process.Recording
 }

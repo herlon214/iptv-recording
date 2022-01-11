@@ -1,11 +1,14 @@
 package kubernetes
 
 import (
+	"fmt"
 	"github.com/herlon214/iptv-recording/recording"
 	"github.com/spf13/cobra"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
+	"time"
 
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -64,27 +67,57 @@ func sync(request *SyncRequest) (*SyncResponse, error) {
 		}
 	}
 
+	// Check if should be running
+	shouldRun, err := request.Parent.Spec.ShouldRun()
+	if err != nil {
+		log.Printf("Error parsing cron: %s", err.Error())
+		return nil, err
+	}
+
 	// Generate desired children.
-	pod := &v1.Pod{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "v1",
-			Kind:       "Pod",
-		},
-		ObjectMeta: metav1.ObjectMeta{
-			Name: request.Parent.Name,
-		},
-		Spec: v1.PodSpec{
-			RestartPolicy: v1.RestartPolicyOnFailure,
-			Containers: []v1.Container{
-				{
-					Name:    "hello",
-					Image:   "busybox",
-					Command: []string{"echo", request.Parent.Spec.Name},
+	if shouldRun {
+		// Parse date in the filename
+		output := fmt.Sprintf("/output/%s/%s", request.Parent.Spec.Folder, request.Parent.Spec.FileName)
+		output = strings.Replace(output, "$date", time.Now().Format("2006-01-02.1504"), -1)
+
+		pod := &v1.Pod{
+			TypeMeta: metav1.TypeMeta{
+				APIVersion: "v1",
+				Kind:       "Pod",
+			},
+			ObjectMeta: metav1.ObjectMeta{
+				GenerateName: fmt.Sprintf("recording-%s", request.Parent.Name),
+			},
+			Spec: v1.PodSpec{
+				RestartPolicy: v1.RestartPolicyOnFailure,
+				Containers: []v1.Container{
+					{
+						Name:    "recording",
+						Image:   "ghcr.io/herlon214/iptv-recording:v0.3.4",
+						Command: []string{"ffmpeg", "-reconnect", "1", "-reconnect_delay_max", "5", "-i", request.Parent.Spec.URL, "-map", "0", "-codec:", "copy", "-f", "mpegts", fmt.Sprintf("%s.mp4", output)},
+						VolumeMounts: []v1.VolumeMount{
+							{
+								Name:      "output",
+								MountPath: "/output",
+							},
+						},
+					},
+				},
+				Volumes: []v1.Volume{
+					{
+						Name: "output",
+						VolumeSource: v1.VolumeSource{
+							HostPath: &v1.HostPathVolumeSource{
+								Path: request.Parent.Spec.HostPath,
+							},
+						},
+					},
 				},
 			},
-		},
+		}
+
+		response.Children = append(response.Children, pod)
 	}
-	response.Children = append(response.Children, pod)
 
 	return response, nil
 }
