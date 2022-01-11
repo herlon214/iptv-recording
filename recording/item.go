@@ -9,13 +9,13 @@ import (
 )
 
 type Item struct {
-	Name     string `yaml:"name" json:"name"`
-	URL      string `yaml:"url" json:"url"`
-	FileName string `yaml:"fileName" json:"fileName"`
-	Schedule string `yaml:"schedule" json:"schedule"` // Cron
-	Duration string `yaml:"duration" json:"duration"`
-	Folder   string `yaml:"folder" json:"folder"`
-	HostPath string `json:"hostPath"`
+	Name            string `yaml:"name" json:"name"`
+	URL             string `yaml:"url" json:"url"`
+	FileName        string `yaml:"fileName" json:"fileName"`
+	Schedule        string `yaml:"schedule" json:"schedule"` // Cron
+	Duration        string `yaml:"duration" json:"duration"`
+	Folder          string `yaml:"folder" json:"folder"`
+	VolumeClaimName string `json:"volumeClaimName"`
 
 	process *process.Recording
 }

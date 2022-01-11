@@ -2,13 +2,14 @@ package kubernetes
 
 import (
 	"fmt"
-	"github.com/herlon214/iptv-recording/recording"
-	"github.com/spf13/cobra"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/herlon214/iptv-recording/recording"
+	"github.com/spf13/cobra"
 
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -109,8 +110,8 @@ func sync(request *SyncRequest) (*SyncResponse, error) {
 					{
 						Name: "output",
 						VolumeSource: v1.VolumeSource{
-							HostPath: &v1.HostPathVolumeSource{
-								Path: request.Parent.Spec.HostPath,
+							PersistentVolumeClaim: &v1.PersistentVolumeClaimVolumeSource{
+								ClaimName: request.Parent.Spec.VolumeClaimName,
 							},
 						},
 					},

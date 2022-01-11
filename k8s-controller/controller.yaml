@@ -32,7 +32,7 @@ spec:
                   type: string
                 folder:
                   type: string
-                hostPath:
+                volumeClaimName:
                   type: string
 
       subresources:
@@ -72,7 +72,7 @@ spec:
     spec:
       containers:
         - name: controller
-          image: ghcr.io/herlon214/iptv-recording:v0.3.8
+          image: ghcr.io/herlon214/iptv-recording:v0.3.9
           args: ["k8s"]
 ---
 apiVersion: v1
