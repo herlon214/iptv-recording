@@ -21,25 +21,36 @@ type Item struct {
 }
 
 func (i *Item) ShouldRun() (bool, error) {
-	// Parse cron
-	schedule, err := cron.ParseStandard(i.Schedule)
-	if err != nil {
-		return false, err
-	}
-
 	// Parse duration
-	dur, err := time.ParseDuration(i.Duration)
+	dur, err := i.ParseDuration()
 	if err != nil {
 		return false, err
 	}
 
-	next := schedule.Next(time.Now().Add(dur * -1))
+	next, err := i.NextRun(dur)
+	if err != nil {
+		return false, err
+	}
 
 	if time.Now().After(next) && time.Now().Before(next.Add(dur)) {
 		return true, nil
 	}
 
 	return false, nil
+}
+
+func (i *Item) ParseDuration() (time.Duration, error) {
+	return time.ParseDuration(i.Duration)
+}
+
+func (i *Item) NextRun(dur time.Duration) (time.Time, error) {
+	// Parse cron
+	schedule, err := cron.ParseStandard(i.Schedule)
+	if err != nil {
+		return time.Now(), err
+	}
+
+	return schedule.Next(time.Now().Add(dur * -1)), nil
 }
 
 func (i *Item) SetProcess(proc *process.Recording) {

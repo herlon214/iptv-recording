@@ -60,6 +60,13 @@ func sync(request *SyncRequest) (*SyncResponse, error) {
 	response := &SyncResponse{}
 	name := fmt.Sprintf("recording-%s", request.Parent.Name)
 
+	// Check if should be running
+	shouldRun, err := request.Parent.Spec.ShouldRun()
+	if err != nil {
+		log.Printf("Error parsing cron: %s", err.Error())
+		return nil, err
+	}
+
 	// Compute status based on latest observed state.
 	for _, pod := range request.Children.Pods {
 		if strings.Contains(name, pod.Name) {
@@ -70,16 +77,8 @@ func sync(request *SyncRequest) (*SyncResponse, error) {
 		}
 	}
 
-	// Check if should be running
-	shouldRun, err := request.Parent.Spec.ShouldRun()
-	if err != nil {
-		log.Printf("Error parsing cron: %s", err.Error())
-		return nil, err
-	}
-
 	// Generate desired children.
-	if shouldRun {
-		// Parse date in the filename
+	if shouldRun { // Parse date in the filename
 		output := fmt.Sprintf("/output/%s/%s", request.Parent.Spec.Folder, request.Parent.Spec.FileName)
 		output = strings.Replace(output, "$date", time.Now().Format("2006-01-02.1504"), -1)
 
@@ -89,7 +88,7 @@ func sync(request *SyncRequest) (*SyncResponse, error) {
 				Kind:       "Pod",
 			},
 			ObjectMeta: metav1.ObjectMeta{
-				GenerateName: fmt.Sprintf("recording-%s", request.Parent.Name),
+				Name: fmt.Sprintf("iptv-recording-%s", request.Parent.Name),
 			},
 			Spec: v1.PodSpec{
 				RestartPolicy: v1.RestartPolicyOnFailure,
