@@ -58,12 +58,15 @@ type SyncResponse struct {
 
 func sync(request *SyncRequest) (*SyncResponse, error) {
 	response := &SyncResponse{}
+	name := fmt.Sprintf("recording-%s", request.Parent.Name)
 
 	// Compute status based on latest observed state.
 	for _, pod := range request.Children.Pods {
-		response.Status.Replicas++
-		if pod.Status.Phase == v1.PodSucceeded {
-			response.Status.Succeeded++
+		if strings.Contains(name, pod.Name) {
+			response.Status.Replicas++
+			if pod.Status.Phase == v1.PodSucceeded {
+				response.Status.Succeeded++
+			}
 		}
 	}
 
