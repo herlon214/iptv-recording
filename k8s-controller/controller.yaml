@@ -44,6 +44,7 @@ metadata:
   name: iptv-recording-controller
 spec:
   generateSelector: true
+  resyncPeriodSeconds: 30
   parentResource:
     apiVersion: herlon214.github.io/v1
     resource: iptvrecordings
