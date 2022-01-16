@@ -18,7 +18,7 @@ func New(URL string, output string) (*Recording, error) {
 	// Apply $date var
 	output = strings.Replace(output, "$date", time.Now().Format("2006-01-02 15:04"), -1)
 
-	cmd := exec.Command("ffmpeg", "-reconnect", "1", "-reconnect_delay_max", "5", "-i", URL, "-map", "0", "-codec:", "copy", "-f", "mpegts", fmt.Sprintf("%s.mp4", output))
+	cmd := exec.Command("ffmpeg", "-i", URL, "-map", "0", "-codec:", "copy", "-f", "mpegts", fmt.Sprintf("%s.mp4", output))
 	stdin, err := cmd.StdinPipe()
 	if nil != err {
 		return nil, err
